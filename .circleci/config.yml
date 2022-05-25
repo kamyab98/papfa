@@ -13,18 +13,18 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install Python Dependencies
-        command: |
-          python3 -m venv env
-          . env/bin/activate
-          pip3 install -r requirements.txt
+          name: Install Python Dependencies
+          command: |
+            python3 -m venv env
+            . env/bin/activate
+            pip3 install -r requirements.txt
       - run:
-        name: build package for release
-        command: |
-          pip3 install twine
-          python3 setup.py bdist_wheel
+          name: build package for release
+          command: |
+            pip3 install twine
+            python3 setup.py bdist_wheel
       - run:
-        name: Deploy package to PyPi
-        command: |
-          . env/bin/activate
-          twine upload dist/* -p ${PYPI_PASSWORD} -u  ${PYPI_USERNAME}
+          name: Deploy package to PyPi
+          command: |
+            . env/bin/activate
+            twine upload dist/* -p ${PYPI_PASSWORD} -u  ${PYPI_USERNAME}
