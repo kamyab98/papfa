@@ -1,26 +1,30 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
-version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+version: 2.1 # CircleCI version
+workflows:
+  build_and_deploy:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: main
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  deploy:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+        name: Install Python Dependencies
+        command: |
+          python3 -m venv env
+          . env/bin/activate
+          pip3 install -r requirements.txt
+      - run:
+        name: build package for release
+        command: |
+          pip3 install twine
+          python3 setup.py bdist_wheel
+      - run:
+        name: Deploy package to PyPi
+        command: |
+          . env/bin/activate
+          twine upload dist/* -p ${PYPI_PASSWORD} -u  ${PYPI_USERNAME}
