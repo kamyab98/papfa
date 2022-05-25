@@ -15,10 +15,6 @@ Papfa
         :alt: Documentation Status
 
 
-.. image:: https://pyup.io/repos/github/kamyab98/papfa/shield.svg
-     :target: https://pyup.io/repos/github/kamyab98/papfa/
-     :alt: Updates
-
 
 
 Papfa is a high level pub/sub pattern Python library.
