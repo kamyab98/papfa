@@ -1,0 +1,5 @@
+pytest==7.1.2
+black==22.3.0
+confluent_kafka[avro]~=1.8.2
+dataclasses-avroschema~=0.29.2
+click~=8.1.3
