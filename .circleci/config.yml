@@ -5,7 +5,7 @@ workflows:
       - deploy:
           filters:
             branches:
-              only: main
+              only: master
 jobs:
   deploy:
     docker:
