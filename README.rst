@@ -6,8 +6,8 @@ Papfa
 .. image:: https://img.shields.io/pypi/v/papfa.svg
         :target: https://pypi.python.org/pypi/papfa
 
-.. image:: https://circleci.com/github/kamyab98/papfa.svg/?style=svg
-        :target: https://circleci.com/github/kamyab98/papfa
+.. image:: https://circleci.com/gh/kamyab98/papfa/tree/master.svg?style=svg
+        :target: https://circleci.com/gh/kamyab98/papfa/tree/master
         :alt: Pipeline Status
 
 .. image:: https://readthedocs.org/projects/papfa/badge/?version=latest
