@@ -17,7 +17,7 @@ jobs:
           command: |
             python3 -m venv env
             . env/bin/activate
-            pip3 install -r requirements.txt
+            pip3 install -r requirements_dev.txt
       - run:
           name: build package for release
           command: |
