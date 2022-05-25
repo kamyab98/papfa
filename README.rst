@@ -6,8 +6,9 @@ Papfa
 .. image:: https://img.shields.io/pypi/v/papfa.svg
         :target: https://pypi.python.org/pypi/papfa
 
-.. image:: https://circleci.com/github/kamyab98/papfa.svg?style=svg
+.. image:: https://circleci.com/github/kamyab98/papfa.svg/?style=svg
         :target: https://circleci.com/github/kamyab98/papfa
+        :alt: Pipeline Status
 
 .. image:: https://readthedocs.org/projects/papfa/badge/?version=latest
         :target: https://papfa.readthedocs.io/en/latest/?version=latest
@@ -25,7 +26,7 @@ Papfa is a high level pub/sub pattern Python library.
 
 
 Quick Start for Django
------------
+-----------------------
 Install Papfa::
 
     $ pip install papfa
@@ -33,6 +34,7 @@ Install Papfa::
 Add Papfa to your settings:
 
 .. code-block:: python
+
     PAPFA = {
         'BROKER': 'KAFKA',
         'KAFKA_BOOTSTRAP_SERVERS': ...,
@@ -95,7 +97,7 @@ Papfa provides middlewares for both consumers and producers. You can implement y
 
 
 Serialization
-------------
+---------------
 For Now Papfa only support confluent avro serialization with schema registry.
 
 Broker
@@ -117,7 +119,7 @@ Todos
 
 
 Credits
--------
+--------
 
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
