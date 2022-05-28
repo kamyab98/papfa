@@ -46,10 +46,13 @@ class Papfa:
                     security_protocol=self.get_config('KAFKA_SECURITY_PROTOCOL', config, default='SASL_PALIN'),
                 )
                 self._config['kafka_group_id_prefix'] = self.get_config('GROUP_ID_PREFIX', config)
-                self._config['schema_registry'] = SchemaRegistryClient({
-                    'url': self.get_config('SCHEMA_REGISTRY_URL', config),
-                    'basic.auth.user.info': self.get_config('SCHEMA_REGISTRY_BASIC_AUTH', config),
-                })
+                try:
+                    self._config['schema_registry'] = SchemaRegistryClient({
+                        'url': self.get_config('SCHEMA_REGISTRY_URL', config),
+                        'basic.auth.user.info': self.get_config('SCHEMA_REGISTRY_BASIC_AUTH', config),
+                    })
+                except ValueError:
+                    self._config['schema_registry'] = None
                 self._config['consumer_middlewares'] = self.get_config('CONSUMER_MIDDLEWARES', config)
                 if django_support:
                     self._config['consumers_dirs'] = settings.INSTALLED_APPS
