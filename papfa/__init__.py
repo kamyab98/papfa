@@ -6,4 +6,4 @@ from .settings import Papfa
 
 __author__ = """Kamyab Zareh"""
 __email__ = 'kamyab.zareh@gmail.com'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
