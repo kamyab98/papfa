@@ -46,6 +46,23 @@ Add Papfa to your settings:
         ]
 
     }
+**Consumer**
+Add <django_project>.papfa.py
+
+.. code-block:: python
+
+    from papfa import Papfa
+
+    papfa_app = Papfa()
+
+Import papfa in <django_project>.__init__.py
+
+.. code-block:: python
+
+    from <django_project>.papfa import papfa_app
+
+    __all__ = ['papfa_app']
+
 
 Add consumer in ``<app>/consumers.py``:
 
@@ -57,6 +74,47 @@ Add consumer in ``<app>/consumers.py``:
     @consumer(topic='topic_name')
     def my_consumer(messages: List[Record]):
         print(messages)
+
+Use papfa cli to consume
+
+.. code-block:: bash
+
+     papfa consume -a <django_app> <consumer_name>
+
+Example of project structure:
+
+.. code-block::
+
+    └── shop
+        ├── shop
+        │   ├── __init__.py
+        │   ├── papfa.py
+        │   ├── settings.py
+        │   ├── urls.py
+        │   └── wsgi.py
+        ├── app1
+        │   ├── __init__.py
+        │   ├── admin.py
+        │   ├── apps.py
+        │   ├── consumers.py
+        │   ├── migrations
+        │   │   └── __init__.py
+        │   ├── models.py
+        │   ├── tests.py
+        │   └── views.py
+        ├── app2
+        │   ├── __init__.py
+        │   ├── admin.py
+        │   ├── apps.py
+        │   ├── consumers.py
+        │   ├── migrations
+        │   │   └── __init__.py
+        │   ├── models.py
+        │   ├── tests.py
+        │   └── views.py
+        └── manage.py
+
+
 
 
 Produce Message:
@@ -80,6 +138,24 @@ Produce Message:
     message_producer = get_message_producer(topic='topic_name', User)
 
     message_producer.produce(messages=[r1, r2])
+
+
+CLI
+---
+Papfa provides a command line interface to consume and monitor consumers.
+
+.. list-table:: Commands
+   :widths: 25 25
+   :header-rows: 1
+
+   * - Command
+     - Description
+   * - list
+     - list of all consumers
+   * - consume
+     - consume messages from a known consumer
+   * - stats
+     - show stats of a consumer
 
 
 Middleware
