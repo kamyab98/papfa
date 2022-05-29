@@ -47,6 +47,7 @@ Add Papfa to your settings:
 
     }
 **Consumer**
+
 Add <django_project>.papfa.py
 
 .. code-block:: python
@@ -116,6 +117,7 @@ Example of project structure:
 
 
 
+**Producer**
 
 Produce Message:
 
