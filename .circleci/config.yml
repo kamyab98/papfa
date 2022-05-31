@@ -16,6 +16,12 @@ jobs:
       - run:
           name: Test
           command: 'tox'
+      - run:
+          name: Coverage
+          command: 'coverage run --source papfa -m pytest && coverage report -m && coverage html'
+      - run:
+          name: Upload
+          command: 'curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov''
   deploy:
     docker:
       - image: circleci/python:3.9
