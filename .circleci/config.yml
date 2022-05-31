@@ -19,6 +19,7 @@ jobs:
       - run:
           name: Coverage
           command: |
+            pip3 install -r requirements_dev.txt
             coverage run --source papfa -m pytest
             coverage report -m
             coverage html
