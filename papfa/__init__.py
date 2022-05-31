@@ -8,4 +8,4 @@ __all__ = ["consumer", "get_message_producer", "Papfa"]
 
 __author__ = """Kamyab Zareh"""
 __email__ = "kamyab.zareh@gmail.com"
-__version__ = '0.1.2'
+__version__ = '0.1.3'
