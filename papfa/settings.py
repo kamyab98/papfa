@@ -1,4 +1,3 @@
-import os
 from copy import deepcopy
 
 from confluent_kafka.schema_registry import SchemaRegistryClient
@@ -36,31 +35,47 @@ class Papfa:
     def setup(self, config: dict = None):
         if config is not None or django_support:
             self._config = {}
-            broker = self.get_config('BROKER', config, default='kafka')
-            if broker == 'kafka':
-                self._config['kafka_config'] = KafkaConfig(
-                    bootstrap_servers=self.get_config('KAFKA_BOOTSTRAP_SERVERS', config),
-                    sasl_password=self.get_config('KAFKA_SASL_PASSWORD', config),
-                    sasl_username=self.get_config('KAFKA_SASL_USERNAME', config),
-                    sasl_mechanism=self.get_config('KAFKA_SASL_MECHANISM', config, default='PLAIN'),
-                    security_protocol=self.get_config('KAFKA_SECURITY_PROTOCOL', config, default='SASL_PALIN'),
+            broker = self.get_config("BROKER", config, default="kafka")
+            if broker == "kafka":
+                self._config["kafka_config"] = KafkaConfig(
+                    bootstrap_servers=self.get_config(
+                        "KAFKA_BOOTSTRAP_SERVERS", config
+                    ),
+                    sasl_password=self.get_config("KAFKA_SASL_PASSWORD", config),
+                    sasl_username=self.get_config("KAFKA_SASL_USERNAME", config),
+                    sasl_mechanism=self.get_config(
+                        "KAFKA_SASL_MECHANISM", config, default="PLAIN"
+                    ),
+                    security_protocol=self.get_config(
+                        "KAFKA_SECURITY_PROTOCOL", config, default="SASL_PALIN"
+                    ),
                 )
-                self._config['kafka_group_id_prefix'] = self.get_config('GROUP_ID_PREFIX', config)
+                self._config["kafka_group_id_prefix"] = self.get_config(
+                    "GROUP_ID_PREFIX", config
+                )
                 try:
-                    self._config['schema_registry'] = SchemaRegistryClient({
-                        'url': self.get_config('SCHEMA_REGISTRY_URL', config),
-                        'basic.auth.user.info': self.get_config('SCHEMA_REGISTRY_BASIC_AUTH', config),
-                    })
+                    self._config["schema_registry"] = SchemaRegistryClient(
+                        {
+                            "url": self.get_config("SCHEMA_REGISTRY_URL", config),
+                            "basic.auth.user.info": self.get_config(
+                                "SCHEMA_REGISTRY_BASIC_AUTH", config
+                            ),
+                        }
+                    )
                 except ValueError:
-                    self._config['schema_registry'] = None
-                self._config['consumer_middlewares'] = self.get_config('CONSUMER_MIDDLEWARES', config)
+                    self._config["schema_registry"] = None
+                self._config["consumer_middlewares"] = self.get_config(
+                    "CONSUMER_MIDDLEWARES", config
+                )
                 if django_support:
-                    self._config['consumers_dirs'] = settings.INSTALLED_APPS
+                    self._config["consumers_dirs"] = settings.INSTALLED_APPS
                 else:
-                    self._config['consumers_dirs'] = self.get_config('CONSUMERS_DIRS', config)
+                    self._config["consumers_dirs"] = self.get_config(
+                        "CONSUMERS_DIRS", config
+                    )
 
             else:
-                raise NotImplementedError(f'Broker {broker} not supported yet')
+                raise NotImplementedError(f"Broker {broker} not supported yet")
 
         else:
             self._config = None
@@ -75,7 +90,7 @@ class Papfa:
         if not settings.configured:
             django.setup()
 
-        if not hasattr(settings, 'PAPFA'):
+        if not hasattr(settings, "PAPFA"):
             return self.get_default_or_raise_bad_config(key, default)
 
         papfa = settings.PAPFA
@@ -96,7 +111,7 @@ class Papfa:
 
     def __getitem__(self, item):
         if self._config is None:
-            raise RuntimeError('PAPFA Settings is not configured yet!')
+            raise RuntimeError("PAPFA Settings is not configured yet!")
 
         return self._config.get(item)
 
