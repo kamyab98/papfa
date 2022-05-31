@@ -178,12 +178,41 @@ class KafkaConsumer(BaseConsumer):
 consumers_list = []
 
 
-def consumer(topic=None, group_id=None, satisfy_method=None, batch_config=None):
+def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_config):
+    class CustomMessageHandler(MessageHandler):
+        def is_satisfy(_self, msg):
+            return satisfy_method(msg)
+
+        def handle_batch(_self, batch):
+            return func(batch)
+
+    _configs = {
+        'kafka_consumer_config': KafkaConsumerConfig(
+            group_id=Papfa.get_instance()["kafka_group_id_prefix"] + group_id,
+            deserializer=AvroDeserializer(
+                schema_registry_client=Papfa.get_instance()['schema_registry']),
+            kafka_config=Papfa.get_instance()['kafka_config'],
+            topics=[topic],
+        ),
+        'message_handler': CustomMessageHandler(),
+        'middlewares': [
+            import_string(m)()
+            for m in Papfa.get_instance()['consumer_middlewares']]
+        if Papfa.get_instance()['consumer_middlewares'] else [],
+    }
+    if batch_config:
+        _configs['batch_config'] = batch_config
+
+    return KafkaConsumer(**_configs)
+
+
+def consumer(topic=None, group_id=None, satisfy_method=None, batch_config=None, consumer_strategy: BaseConsumer = None):
     _options = {
         'group_id': group_id,
         'topic': topic,
         'satisfy_method': satisfy_method,
         'batch_config': batch_config,
+        'consumer': consumer_strategy,
     }
 
     def create_consumer(**options):
@@ -191,41 +220,22 @@ def consumer(topic=None, group_id=None, satisfy_method=None, batch_config=None):
             def __init__(self, func):
                 self.__is_consumer__ = True
                 self.func = func
-                self.satisfy_method = options.get('satisfy_method') or (lambda *args, **kwargs: True)
-                self.group_id = options.get('group_id') or 'default'
-                _group_id = options['group_id'] or f'-{self.func.__name__}'
                 consumers_list.append(func.__name__)
 
             def __call__(self, *args, **kwargs):
                 return self.func(*args, **kwargs)
 
             def consume(self):
-                class CustomMessageHandler(MessageHandler):
-                    def is_satisfy(_self, msg):
-                        return self.satisfy_method(msg)
-
-                    def handle_batch(_self, batch):
-                        return self.func(batch)
-
-                _configs = {
-                    'kafka_consumer_config': KafkaConsumerConfig(
-                        group_id=Papfa.get_instance()["kafka_group_id_prefix"] + self.group_id,
-                        deserializer=AvroDeserializer(
-                            schema_registry_client=Papfa.get_instance()['schema_registry']),
-                        kafka_config=Papfa.get_instance()['kafka_config'],
-                        topics=[topic],
-                    ),
-                    'message_handler': CustomMessageHandler(),
-                    'middlewares': [
-                        import_string(m)()
-                        for m in Papfa.get_instance()['consumer_middlewares']]
-                    if Papfa.get_instance()['consumer_middlewares'] else [],
-                }
-                if options['batch_config']:
-                    _configs['batch_config'] = options['batch_config']
-                KafkaConsumer(
-                    **_configs
-                ).consume()
+                _satisfy_method = options.get('satisfy_method') or (lambda *args, **kwargs: True)
+                _group_id = options.get('group_id') or f'-{self.func.__name__}'
+                _consumer = options.get('consumer') or get_default_kafka_consumer(
+                    func=self.func,
+                    topic=options.get('topic'),
+                    group_id=_group_id,
+                    satisfy_method=_satisfy_method,
+                    batch_config=batch_config,
+                )
+                return _consumer.consume()
 
         return Consumer
 

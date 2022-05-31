@@ -2,11 +2,20 @@ version: 2.1 # CircleCI version
 workflows:
   build_and_deploy:
     jobs:
+      - test
       - deploy:
           filters:
             branches:
               only: master
 jobs:
+  test:
+    docker:
+      - image: fkrull/multi-python
+    steps:
+      - checkout
+      - run:
+          name: Test
+          command: 'tox'
   deploy:
     docker:
       - image: circleci/python:3.9
