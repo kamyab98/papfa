@@ -46,6 +46,7 @@ Add Papfa to your settings:
         ]
 
     }
+
 **Consumer**
 
 Add <django_project>.papfa.py
