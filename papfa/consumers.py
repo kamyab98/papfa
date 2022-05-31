@@ -88,6 +88,7 @@ class KafkaConsumer(BaseConsumer):
                     "sasl.username": self.kafka_consumer_config.kafka_config.sasl_username,
                     "sasl.password": self.kafka_consumer_config.kafka_config.sasl_password,
                     "value.deserializer": self.kafka_consumer_config.deserializer,
+                    "enable.auto.commit": False,
                     **self.consumer_kwargs,
                 }
             )
