@@ -17,7 +17,7 @@ def fake_consumer():
 
 @pytest.fixture
 def simple_consumer(fake_consumer):
-    @consumer('topic', consumer_strategy=fake_consumer)
+    @consumer("topic", consumer_strategy=fake_consumer)
     def consumer_function(messages: List[Record]):
         return len(messages)
 
