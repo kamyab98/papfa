@@ -194,7 +194,7 @@ def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_conf
 
     _configs = {
         "kafka_consumer_config": KafkaConsumerConfig(
-            group_id=Papfa.get_instance()["kafka_group_id_prefix"] + group_id,
+            group_id=Papfa.get_instance()["kafka_group_id_prefix"] + '-' + group_id,
             deserializer=AvroDeserializer(
                 schema_registry_client=Papfa.get_instance()["schema_registry"]
             ),
@@ -243,7 +243,7 @@ def consumer(
                 _satisfy_method = options.get("satisfy_method") or (
                     lambda *args, **kwargs: True
                 )
-                _group_id = options.get("group_id") or f"-{self.func.__name__}"
+                _group_id = options.get("group_id") or f"{self.func.__name__}"
                 _consumer = options.get("consumer") or get_default_kafka_consumer(
                     func=self.func,
                     topic=options.get("topic"),
