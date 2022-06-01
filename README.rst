@@ -10,6 +10,10 @@ Papfa
         :target: https://circleci.com/gh/kamyab98/papfa/tree/master
         :alt: Pipeline Status
 
+.. image:: https://codecov.io/gh/kamyab98/papfa/branch/master/graph/badge.svg?token=6O48ISX0KN
+        :target: https://codecov.io/gh/kamyab98/papfa
+
+
 .. image:: https://readthedocs.org/projects/papfa/badge/?version=latest
         :target: https://papfa.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status
