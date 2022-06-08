@@ -20,6 +20,7 @@ class Papfa:
         self.__class__._instances.add(self)
         self._config = None
         self.django_support = django_support
+        self.is_django_setup = False
         self.setup()
 
     @classmethod
@@ -87,7 +88,8 @@ class Papfa:
         if not django_support:
             return self.get_default_or_raise_bad_config(key, default)
 
-        if not settings.configured:
+        if self.django_support and not self.is_django_setup:
+            self.is_django_setup = True
             django.setup()
 
         if not hasattr(settings, "PAPFA"):
