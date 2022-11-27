@@ -11,7 +11,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'confluent_kafka~=1.8.2',
+    'confluent_kafka~=1.9.2',
     'dataclasses-avroschema~=0.29.2',
     'click~=8.1.3',
 ]
@@ -30,6 +30,9 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
     ],
     description="High level pub/sub package",
     entry_points={
@@ -47,6 +50,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/kamyab98/papfa',
-    version='0.1.5',
+    version='0.1.6',
     zip_safe=False,
 )
