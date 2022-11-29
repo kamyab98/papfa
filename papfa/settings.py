@@ -36,7 +36,7 @@ class Papfa:
     def setup(self, config: dict = None):
         if config is not None or django_support:
             self._config = {}
-            broker = self.get_config("BROKER", config, default="kafka")
+            broker = self.get_config("BROKER", config, default="kafka").lower()
             if broker == "kafka":
                 self._config["kafka_config"] = KafkaConfig(
                     bootstrap_servers=self.get_config(

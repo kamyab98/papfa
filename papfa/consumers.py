@@ -77,21 +77,23 @@ class KafkaConsumer(BaseConsumer):
     @property
     def consumer(self):
         if not self._consumer:
-            self._consumer = DeserializingConsumer(
-                {
-                    "bootstrap.servers": ",".join(
-                        self.kafka_consumer_config.kafka_config.bootstrap_servers
-                    ),
-                    "group.id": self.kafka_consumer_config.group_id,
-                    "sasl.mechanism": self.kafka_consumer_config.kafka_config.sasl_mechanism,
-                    "security.protocol": self.kafka_consumer_config.kafka_config.security_protocol,
-                    "sasl.username": self.kafka_consumer_config.kafka_config.sasl_username,
-                    "sasl.password": self.kafka_consumer_config.kafka_config.sasl_password,
-                    "value.deserializer": self.kafka_consumer_config.deserializer,
-                    "enable.auto.commit": False,
-                    **self.consumer_kwargs,
-                }
-            )
+            _config = {
+                "bootstrap.servers": ",".join(
+                    self.kafka_consumer_config.kafka_config.bootstrap_servers
+                ),
+                "group.id": self.kafka_consumer_config.group_id,
+                "sasl.mechanism": self.kafka_consumer_config.kafka_config.sasl_mechanism,
+                "security.protocol": self.kafka_consumer_config.kafka_config.security_protocol,
+                "sasl.username": self.kafka_consumer_config.kafka_config.sasl_username,
+                "sasl.password": self.kafka_consumer_config.kafka_config.sasl_password,
+                "value.deserializer": self.kafka_consumer_config.deserializer,
+                "enable.auto.commit": False,
+                **self.consumer_kwargs,
+            }
+            if self.kafka_consumer_config.deserialize_key:
+                _config["key.deserializer"] = self.kafka_consumer_config.deserializer
+
+            self._consumer = DeserializingConsumer(_config)
 
             self._consumer.subscribe(self.kafka_consumer_config.topics)
         return self._consumer
@@ -184,7 +186,7 @@ class KafkaConsumer(BaseConsumer):
 consumers_list = []
 
 
-def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_config):
+def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_config, deserialize_key):
     class CustomMessageHandler(MessageHandler):
         def is_satisfy(_self, msg):
             return satisfy_method(msg)
@@ -200,6 +202,7 @@ def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_conf
             ),
             kafka_config=Papfa.get_instance()["kafka_config"],
             topics=[topic],
+            deserialize_key=deserialize_key
         ),
         "message_handler": CustomMessageHandler(),
         "middlewares": [
@@ -220,6 +223,7 @@ def consumer(
     satisfy_method: Callable = None,
     batch_config: BatchConfig = None,
     consumer_strategy: BaseConsumer = None,
+    deserialize_key: bool = False,
 ):
     _options = {
         "group_id": group_id,
@@ -250,6 +254,7 @@ def consumer(
                     group_id=_group_id,
                     satisfy_method=_satisfy_method,
                     batch_config=batch_config,
+                    deserialize_key=deserialize_key,
                 )
                 return _consumer.consume()
 
