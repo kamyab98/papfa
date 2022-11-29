@@ -24,6 +24,7 @@ class KafkaConsumerConfig:
     deserializer: AvroDeserializer
     kafka_config: KafkaConfig
     topics: List[str]
+    deserialize_key: bool = False
 
 
 @dataclasses.dataclass
