@@ -12,7 +12,7 @@ from confluent_kafka.avro.serializer import SerializerError
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 
-from .config import KafkaConsumerConfig
+from .config import KafkaConsumerConfig, KafkaConfig
 from .dtos import Record
 from .middlewares.consumer import ConsumerMiddleware
 from .settings import Papfa
@@ -186,7 +186,15 @@ class KafkaConsumer(BaseConsumer):
 consumers_list = []
 
 
-def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_config, deserialize_key):
+def get_default_kafka_consumer(
+    func,
+    satisfy_method,
+    topic,
+    group_id,
+    batch_config,
+    deserialize_key,
+    kafka_config=None
+):
     class CustomMessageHandler(MessageHandler):
         def is_satisfy(_self, msg):
             return satisfy_method(msg)
@@ -200,7 +208,7 @@ def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_conf
             deserializer=AvroDeserializer(
                 schema_registry_client=Papfa.get_instance()["schema_registry"]
             ),
-            kafka_config=Papfa.get_instance()["kafka_config"],
+            kafka_config=kafka_config or Papfa.get_instance()["kafka_config"],
             topics=[topic],
             deserialize_key=deserialize_key
         ),
@@ -224,6 +232,7 @@ def consumer(
     batch_config: BatchConfig = None,
     consumer_strategy: BaseConsumer = None,
     deserialize_key: bool = False,
+    kafka_config: KafkaConfig = None,
 ):
     _options = {
         "group_id": group_id,
@@ -231,6 +240,7 @@ def consumer(
         "satisfy_method": satisfy_method,
         "batch_config": batch_config,
         "consumer": consumer_strategy,
+        "kafka_config": kafka_config,
     }
 
     def create_consumer(**options):
@@ -255,6 +265,7 @@ def consumer(
                     satisfy_method=_satisfy_method,
                     batch_config=batch_config,
                     deserialize_key=deserialize_key,
+                    kafka_config=options.get("kafka_config")
                 )
                 return _consumer.consume()
 
