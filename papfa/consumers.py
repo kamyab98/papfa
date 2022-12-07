@@ -186,7 +186,15 @@ class KafkaConsumer(BaseConsumer):
 consumers_list = []
 
 
-def get_default_kafka_consumer(func, satisfy_method, topic, group_id, batch_config, deserialize_key, kafka_config=None):
+def get_default_kafka_consumer(
+    func,
+    satisfy_method,
+    topic,
+    group_id,
+    batch_config,
+    deserialize_key,
+    kafka_config=None
+):
     class CustomMessageHandler(MessageHandler):
         def is_satisfy(_self, msg):
             return satisfy_method(msg)
