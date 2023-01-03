@@ -193,7 +193,8 @@ def get_default_kafka_consumer(
     group_id,
     batch_config,
     deserialize_key,
-    kafka_config=None
+    kafka_config=None,
+    consumer_kwargs=None,
 ):
     class CustomMessageHandler(MessageHandler):
         def is_satisfy(_self, msg):
@@ -213,6 +214,7 @@ def get_default_kafka_consumer(
             deserialize_key=deserialize_key
         ),
         "message_handler": CustomMessageHandler(),
+        "consumer_kwargs": consumer_kwargs or {},
         "middlewares": [
             import_string(m)() for m in Papfa.get_instance()["consumer_middlewares"]
         ]
@@ -233,6 +235,7 @@ def consumer(
     consumer_strategy: BaseConsumer = None,
     deserialize_key: bool = False,
     kafka_config: KafkaConfig = None,
+    consumer_kwargs: dict = None,
 ):
     _options = {
         "group_id": group_id,
@@ -265,7 +268,8 @@ def consumer(
                     satisfy_method=_satisfy_method,
                     batch_config=batch_config,
                     deserialize_key=deserialize_key,
-                    kafka_config=options.get("kafka_config")
+                    kafka_config=options.get("kafka_config"),
+                    consumer_kwargs=consumer_kwargs,
                 )
                 return _consumer.consume()
 
