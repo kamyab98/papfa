@@ -3,33 +3,33 @@ History
 =======
 
 
-0.1.8 (2011-12-07)
+0.1.8 (2022-12-07)
 ------------------
 
 * Add kafka_config in consumer
 
-0.1.7 (2011-11-29)
+0.1.7 (2022-11-29)
 ------------------
 
 * Add deserialize key flag
 
-0.1.6 (2011-11-27)
+0.1.6 (2022-11-27)
 ------------------
 
 * Add Python 3.10 Support
 
-0.1.5 (2011-06-08)
+0.1.5 (2022-06-08)
 ------------------
 
 * Fix AppRegistryNotReady error when importing celery
 
 
-0.1.4 (2011-06-01)
+0.1.4 (2022-06-01)
 ------------------
 
 * Fix group id with prefix in consumer
 
-0.1.3 (2011-05-31)
+0.1.3 (2022-05-31)
 ------------------
 
 * Fix auto commit in batch processing.
