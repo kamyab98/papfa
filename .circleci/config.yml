@@ -49,4 +49,4 @@ jobs:
           name: Deploy package to PyPi
           command: |
             . env/bin/activate
-            twine upload dist/* -p ${PYPI_PASSWORD} -u  ${PYPI_USERNAME}
+            twine upload dist/* -p ${PYPI_PASSWORD} -u  ${PYPI_USERNAME} --verbose
