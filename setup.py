@@ -11,7 +11,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'confluent_kafka~=1.9.2',
+    'confluent_kafka[avro]~=1.9.2',
     'dataclasses-avroschema~=0.29.2',
     'click~=8.1.3',
 ]

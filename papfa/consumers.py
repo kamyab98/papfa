@@ -97,7 +97,9 @@ class KafkaConsumer(BaseConsumer):
             if self.kafka_consumer_config.deserialize_key:
                 _config["key.deserializer"] = self.kafka_consumer_config.deserializer
 
-            self._consumer = DeserializingConsumer(_config)
+            self._consumer = DeserializingConsumer({
+                k: v for k, v in _config.items() if v is not None
+            })
 
             self._consumer.subscribe(self.kafka_consumer_config.topics)
         return self._consumer
@@ -108,6 +110,16 @@ class KafkaConsumer(BaseConsumer):
 
         last_updated = datetime.now()
         while True:
+            if (
+                len(self.batch) >= self.batch_config.size
+                or self.batch_config.timeout < datetime.now() - last_updated
+            ):
+                last_updated = datetime.now()
+                for middleware in self.middlewares:
+                    middleware.process_before_flush(self.batch)
+                self.flush()
+                for middleware in self.middlewares:
+                    middleware.process_after_flush()
             for middleware in self.middlewares:
                 middleware.process_before_poll()
             try:
@@ -147,16 +159,6 @@ class KafkaConsumer(BaseConsumer):
 
             if self.message_handler.is_satisfy(msg):
                 self.batch.append(msg)
-            if (
-                len(self.batch) >= self.batch_config.size
-                or self.batch_config.timeout < datetime.now() - last_updated
-            ):
-                last_updated = datetime.now()
-                for middleware in self.middlewares:
-                    middleware.process_before_flush(self.batch)
-                self.flush()
-                for middleware in self.middlewares:
-                    middleware.process_after_flush()
 
         self.consumer.close()
 
@@ -234,8 +236,6 @@ def get_default_kafka_consumer(
         "middlewares": [
             import_string(m)() for m in Papfa.get_instance()["consumer_middlewares"]
         ]
-        if Papfa.get_instance()["consumer_middlewares"]
-        else [],
     }
     if batch_config:
         _configs["batch_config"] = batch_config
