@@ -2,6 +2,14 @@
 History
 =======
 
+0.1.10 (2023-01-23)
+------------------
+
+* Add Transactional Producer
+* Add More Logs for Consumers
+* Fix Avro Dependency
+
+
 0.1.9 (2023-01-03)
 ------------------
 
