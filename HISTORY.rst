@@ -9,7 +9,6 @@ History
 * Add More Logs for Consumers
 * Fix Avro Dependency
 
-
 0.1.9 (2023-01-03)
 ------------------
 
