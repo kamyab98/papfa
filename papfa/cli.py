@@ -70,11 +70,16 @@ def consume(name, app):
         click.secho("Consumer not found", fg="red")
         sys.exit(1)
 
-    click.secho("Start Consuming {}...".format(name), fg="green")
     module, *address = name.split(".")
     module = __import__(module)
     for a in address:
         module = getattr(module, a)
+
+    click.secho("Consumer Config:")
+    for k, v in module.meta_data:
+        click.secho(k, bold=True, fg="magenta", nl=False)
+        click.secho(f":\t {v}")
+    click.secho("Start Consuming {}...".format(name), fg="green")
     module.consume()
 
 

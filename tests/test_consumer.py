@@ -12,6 +12,9 @@ def fake_consumer():
         def consume(self):
             return True
 
+        def get_meta_data(self):
+            return {}
+
     return FakeConsumer()
 
 

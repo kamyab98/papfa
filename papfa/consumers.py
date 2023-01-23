@@ -26,6 +26,10 @@ class BaseConsumer(abc.ABC):
     def consume(self):
         pass
 
+    @abc.abstractmethod
+    def get_meta_data(self):
+        pass
+
 
 class Deserializer(abc.ABC):
     pass
@@ -173,14 +177,26 @@ class KafkaConsumer(BaseConsumer):
         self.commit()
         self.batch.clear()
         logger.info(
-            f"{self.__class__.__name__} consumed {number_of_messages} messages."
+            f"{self.consumer_name} consumed {number_of_messages} messages."
         )
 
     def exit_gracefully(self, signum, frame):
         self.flush()
         self.consumer.close()
-        logger.info(f"{self.__class__.__name__} exited gracefully.")
+        logger.info(f"{self.consumer_name} exited gracefully.")
         sys.exit()
+
+    @property
+    def consumer_name(self):
+        return f'{self.kafka_consumer_config.group_id}'
+
+    def get_meta_data(self):
+        return {
+            "Group ID": self.kafka_consumer_config.group_id,
+            "Topics": self.kafka_consumer_config.topics,
+            "Batch Size": self.batch_config.size,
+            "Batch Timeout": self.batch_config.timeout,
+        }
 
 
 consumers_list = []
