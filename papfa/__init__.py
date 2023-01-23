@@ -1,10 +1,10 @@
 """Top-level package for papfa."""
 
 from .consumers import consumer
-from .producers import get_message_producer
+from .producers import get_message_producer, get_message_transactional_producer
 from .settings import Papfa
 
-__all__ = ["consumer", "get_message_producer", "Papfa"]
+__all__ = ["consumer", "get_message_producer", "get_message_transactional_producer", "Papfa"]
 
 __author__ = """Kamyab Zareh"""
 __email__ = "kamyab.zareh@gmail.com"
