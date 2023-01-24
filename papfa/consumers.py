@@ -268,26 +268,22 @@ def consumer(
                 self.__is_consumer__ = True
                 self.func = func
                 consumers_list.append(func.__name__)
-
-            def __call__(self, *args, **kwargs):
-                return self.func(*args, **kwargs)
-
-            def consume(self):
-                _satisfy_method = options.get("satisfy_method") or (
-                    lambda *args, **kwargs: True
-                )
-                _group_id = options.get("group_id") or f"{self.func.__name__}"
-                _consumer = options.get("consumer") or get_default_kafka_consumer(
+                self.consumer = options.get("consumer") or get_default_kafka_consumer(
                     func=self.func,
                     topic=options.get("topic"),
-                    group_id=_group_id,
-                    satisfy_method=_satisfy_method,
+                    group_id=options.get("group_id") or f"{self.func.__name__}",
+                    satisfy_method=options.get("satisfy_method") or (lambda *args, **kwargs: True),
                     batch_config=batch_config,
                     deserialize_key=deserialize_key,
                     kafka_config=options.get("kafka_config"),
                     consumer_kwargs=consumer_kwargs,
                 )
-                return _consumer.consume()
+
+            def __call__(self, *args, **kwargs):
+                return self.func(*args, **kwargs)
+
+            def consume(self):
+                return self.consumer.consume()
 
         return Consumer
 

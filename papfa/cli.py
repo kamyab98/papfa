@@ -76,7 +76,7 @@ def consume(name, app):
         module = getattr(module, a)
 
     click.secho("Consumer Config:")
-    for k, v in module.get_meta_data():
+    for k, v in module.consumer.get_meta_data().items():
         click.secho(k, bold=True, fg="magenta", nl=False)
         click.secho(f":\t {v}")
     click.secho("Start Consuming {}...".format(name), fg="green")
