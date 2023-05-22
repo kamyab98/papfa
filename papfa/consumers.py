@@ -163,15 +163,7 @@ class KafkaConsumer(BaseConsumer):
         self.consumer.close()
 
     def commit(self):
-        offsets = defaultdict(int)
-        for msg in self.batch:
-            _key = (msg.meta["topic"], msg.meta["partition"])
-            offsets[_key] = max(offsets[_key], msg.meta["offset"])
-        offsets = [
-            TopicPartition(topic=k[0], partition=k[1], offset=v)
-            for k, v in offsets.items()
-        ]
-        self.consumer.commit(offsets=offsets)
+        self.consumer.commit(asynchronous=False)
 
     def flush(self):
         number_of_messages = len(self.batch)
