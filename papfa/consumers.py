@@ -5,7 +5,7 @@ import signal
 import sys
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import List, Callable
+from typing import List, Callable, Union
 
 from confluent_kafka import DeserializingConsumer, TopicPartition
 from confluent_kafka.avro.serializer import SerializerError
@@ -199,7 +199,7 @@ consumers_list = []
 def get_default_kafka_consumer(
     func,
     satisfy_method,
-    topic,
+    topics,
     group_id,
     batch_config,
     deserialize_key,
@@ -220,7 +220,7 @@ def get_default_kafka_consumer(
                 schema_registry_client=Papfa.get_instance()["schema_registry"]
             ),
             kafka_config=kafka_config or Papfa.get_instance()["kafka_config"],
-            topics=[topic],
+            topics=topics,
             deserialize_key=deserialize_key
         ),
         "message_handler": CustomMessageHandler(),
@@ -236,7 +236,7 @@ def get_default_kafka_consumer(
 
 
 def consumer(
-    topic: str = None,
+    topic: Union[str, List[str]] = None,
     group_id: str = None,
     satisfy_method: Callable = None,
     batch_config: BatchConfig = None,
@@ -245,9 +245,13 @@ def consumer(
     kafka_config: KafkaConfig = None,
     consumer_kwargs: dict = None,
 ):
+
+    if isinstance(topic, str):
+        topic = [topic]
+
     _options = {
         "group_id": group_id,
-        "topic": topic,
+        "topics": topic,
         "satisfy_method": satisfy_method,
         "batch_config": batch_config,
         "consumer": consumer_strategy,
@@ -262,7 +266,7 @@ def consumer(
                 consumers_list.append(func.__name__)
                 self.consumer = options.get("consumer") or get_default_kafka_consumer(
                     func=self.func,
-                    topic=options.get("topic"),
+                    topics=options.get("topics"),
                     group_id=options.get("group_id") or f"{self.func.__name__}",
                     satisfy_method=options.get("satisfy_method") or (lambda *args, **kwargs: True),
                     batch_config=batch_config,
