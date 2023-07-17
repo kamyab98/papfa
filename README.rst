@@ -77,7 +77,7 @@ Add consumer in ``<app>/consumers.py``:
     from papfa.consumers import consumer
     from papfa.dtos import Record
 
-    @consumer(topic='topic_name')
+    @consumer(topics=['topic1_name', 'topic2_name'])
     def my_consumer(messages: List[Record]):
         print(messages)
 

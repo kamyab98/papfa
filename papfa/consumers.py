@@ -199,7 +199,7 @@ consumers_list = []
 def get_default_kafka_consumer(
     func,
     satisfy_method,
-    topic,
+    topics,
     group_id,
     batch_config,
     deserialize_key,
@@ -220,7 +220,7 @@ def get_default_kafka_consumer(
                 schema_registry_client=Papfa.get_instance()["schema_registry"]
             ),
             kafka_config=kafka_config or Papfa.get_instance()["kafka_config"],
-            topics=[topic],
+            topics=topics,
             deserialize_key=deserialize_key
         ),
         "message_handler": CustomMessageHandler(),
@@ -236,7 +236,7 @@ def get_default_kafka_consumer(
 
 
 def consumer(
-    topic: str = None,
+    topics: List[str] = None,
     group_id: str = None,
     satisfy_method: Callable = None,
     batch_config: BatchConfig = None,
@@ -247,7 +247,7 @@ def consumer(
 ):
     _options = {
         "group_id": group_id,
-        "topic": topic,
+        "topics": topics,
         "satisfy_method": satisfy_method,
         "batch_config": batch_config,
         "consumer": consumer_strategy,
@@ -262,7 +262,7 @@ def consumer(
                 consumers_list.append(func.__name__)
                 self.consumer = options.get("consumer") or get_default_kafka_consumer(
                     func=self.func,
-                    topic=options.get("topic"),
+                    topics=options.get("topics"),
                     group_id=options.get("group_id") or f"{self.func.__name__}",
                     satisfy_method=options.get("satisfy_method") or (lambda *args, **kwargs: True),
                     batch_config=batch_config,
