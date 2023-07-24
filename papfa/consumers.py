@@ -111,8 +111,9 @@ class KafkaConsumer(BaseConsumer):
         last_updated = datetime.now()
         while True:
             if (
-                len(self.batch) >= self.batch_config.size
-                or self.batch_config.timeout < datetime.now() - last_updated
+                (len(self.batch) >= self.batch_config.size
+                 or self.batch_config.timeout < datetime.now() - last_updated)
+                and len(self.batch) != 0
             ):
                 last_updated = datetime.now()
                 for middleware in self.middlewares:
