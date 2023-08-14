@@ -3,12 +3,12 @@ import dataclasses
 import logging
 import signal
 import sys
-from collections import defaultdict
+
 from datetime import datetime, timedelta
 from typing import List, Callable, Union
 
-from confluent_kafka import DeserializingConsumer, TopicPartition
-from confluent_kafka.avro.serializer import SerializerError
+from confluent_kafka import DeserializingConsumer
+from confluent_kafka.error import SerializationError
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 
@@ -125,21 +125,20 @@ class KafkaConsumer(BaseConsumer):
                 middleware.process_before_poll()
             try:
                 msg = self.consumer.poll(30)
-
-            except SerializerError as e:
+            except SerializationError as e:
                 if self.raise_exception:
-                    raise Exception
-                logger.error("Message deserialization failed for {}: {}".format(msg, e))
-                break
+                    raise e
+                logger.error("Message deserialization failed for {}".format(e))
+                continue
 
             if msg is None:
                 logger.warning("Consuming timeout")
                 continue
 
-            if msg.error():
+            if e := msg.error():
                 if self.raise_exception:
-                    raise Exception
-                logger.error("AvroConsumer error: {}".format(msg.error()))
+                    raise e
+                logger.error("AvroConsumer error: {}".format(e))
                 continue
 
             msg = Record(
@@ -246,7 +245,6 @@ def consumer(
     kafka_config: KafkaConfig = None,
     consumer_kwargs: dict = None,
 ):
-
     if isinstance(topic, str):
         topic = [topic]
 
