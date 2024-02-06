@@ -16,12 +16,12 @@ except ModuleNotFoundError:
 class Papfa:
     _instances = set()
 
-    def __init__(self):
+    def __init__(self, config: dict = None):
         self.__class__._instances.add(self)
         self._config = None
         self.django_support = django_support
         self.is_django_setup = False
-        self.setup()
+        self.setup(config)
 
     @classmethod
     def get_instance(cls):
